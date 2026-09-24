@@ -18,29 +18,6 @@ Dhuska — a Jharkhandi rice-and-lentil snack.
 Kachori, Samosa & Jalebi — easy street-food options around the busy market areas.
 Chai — because every pilgrimage needs a chai break.
 
-🛠️ Built with
-HTML
-CSS
-Vanilla JavaScript
-Three.js
-
-
-📁 Project structure
-├── index.html
-├── css/
-│   └── styles.css
-├── js/
-│   ├── app.js
-│   ├── boot.js
-│   ├── images.js
-│   ├── map.js
-│   ├── puja.js
-│   └── vendor/
-│       ├── three.min.js
-│       └── OrbitControls.js
-└── README.md
-
-
 ⚠️ A small note
 
 The visuals and 3D map on this website are creative interpretations made for this project and are not exact or real representations of Baidyanath Temple or its premises.
