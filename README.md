@@ -24,6 +24,7 @@ CSS
 Vanilla JavaScript
 Three.js
 
+
 📁 Project structure
 ├── index.html
 ├── css/
@@ -38,6 +39,7 @@ Three.js
 │       ├── three.min.js
 │       └── OrbitControls.js
 └── README.md
+
 
 ⚠️ A small note
 
