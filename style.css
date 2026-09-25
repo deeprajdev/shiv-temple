@@ -43,10 +43,11 @@ header.hero h1{font:600 clamp(48px,13vw,88px)/.98 var(--head);letter-spacing:-.0
 
 /* section nav */
 nav.toc{position:sticky;top:56px;z-index:10;background:rgba(232,240,246,.86);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch}
-nav.toc .wrap{display:flex;gap:4px;padding:9px 18px;max-width:1120px}
+nav.toc .wrap{display:flex;justify-content:center;gap:4px;padding:9px 18px;max-width:1120px}
 nav.toc a{flex:none;text-decoration:none;color:var(--muted);padding:6px 13px;border-radius:999px;font-weight:600;font-size:14px}
 nav.toc a:hover{color:var(--ink)}
 nav.toc a.on{background:var(--ink);color:#fff}
+@media (max-width:700px){nav.toc .wrap{justify-content:flex-start}}
 
 /* sections */
 main{counter-reset:sec;padding-bottom:10px}
