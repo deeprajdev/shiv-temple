@@ -39,22 +39,48 @@
     if(window.IMG&&window.IMG[im.dataset.img])im.src=window.IMG[im.dataset.img];
   });
 
-  // highlight the current section in the guide nav
+  // Keep section navigation aligned with both the fixed bar and sticky TOC.
   var links=[].slice.call(document.querySelectorAll('nav.toc a'));
-  if('IntersectionObserver' in window){
-    var io=new IntersectionObserver(function(es){
-      es.forEach(function(e){
-        if(e.isIntersecting){
-          links.forEach(function(a){
-            var on=a.getAttribute('href')==='#'+e.target.id;
-            a.classList.toggle('on',on);
-            if(on&&a.scrollIntoView)a.scrollIntoView({inline:'center',block:'nearest'});
-          });
-        }
-      });
-    },{rootMargin:'-30% 0px -60% 0px'});
-    [].slice.call(document.querySelectorAll('main section')).forEach(function(s){io.observe(s)});
+  var sections=[].slice.call(document.querySelectorAll('main section'));
+  var activeSection='';
+  var scrollTick=false;
+  function sectionOffset(){
+    var bar=document.getElementById('sitebar'),toc=document.querySelector('nav.toc');
+    return (bar?bar.getBoundingClientRect().height:0)+(toc?toc.getBoundingClientRect().height:0)+8;
   }
+  function setSection(id){
+    if(!id||id===activeSection)return;
+    activeSection=id;
+    links.forEach(function(a){
+      var on=a.getAttribute('href')==='#'+id;
+      a.classList.toggle('on',on);
+      if(on&&a.scrollIntoView)a.scrollIntoView({inline:'center',block:'nearest'});
+    });
+  }
+  function syncSection(){
+    scrollTick=false;
+    var line=(window.pageYOffset||window.scrollY||0)+sectionOffset()+1;
+    var current=sections[0];
+    sections.forEach(function(section){
+      if(section.offsetTop<=line)current=section;
+    });
+    if(current)setSection(current.id);
+  }
+  links.forEach(function(link){
+    link.addEventListener('click',function(event){
+      var id=(link.getAttribute('href')||'').slice(1),target=document.getElementById(id);
+      if(!target)return;
+      event.preventDefault();
+      setSection(id);
+      try{history.pushState(null,'','#'+id)}catch(e){location.hash=id}
+      window.scrollTo({top:Math.max(0,target.offsetTop-sectionOffset()),behavior:'smooth'});
+    });
+  });
+  window.addEventListener('scroll',function(){
+    if(!scrollTick){scrollTick=true;window.requestAnimationFrame(syncSection)}
+  },{passive:true});
+  window.addEventListener('resize',syncSection);
+  syncSection();
   // checklist ticks are remembered on this device when storage is available
   var boxes=[].slice.call(document.querySelectorAll('#check input'));
   var saved=[];
