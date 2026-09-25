@@ -44,6 +44,7 @@
   var sections=[].slice.call(document.querySelectorAll('main section'));
   var activeSection='';
   var scrollTick=false;
+  var scrollAnimation=0;
   function sectionOffset(){
     var bar=document.getElementById('sitebar'),toc=document.querySelector('nav.toc');
     return (bar?bar.getBoundingClientRect().height:0)+(toc?toc.getBoundingClientRect().height:0)+8;
@@ -54,17 +55,33 @@
     links.forEach(function(a){
       var on=a.getAttribute('href')==='#'+id;
       a.classList.toggle('on',on);
-      if(on&&a.scrollIntoView)a.scrollIntoView({inline:'center',block:'nearest'});
     });
   }
   function syncSection(){
     scrollTick=false;
+    if(scrollAnimation)return;
     var line=(window.pageYOffset||window.scrollY||0)+sectionOffset()+1;
     var current=sections[0];
     sections.forEach(function(section){
       if(section.offsetTop<=line)current=section;
     });
     if(current)setSection(current.id);
+  }
+  function scrollToSection(target){
+    if(scrollAnimation)cancelAnimationFrame(scrollAnimation);
+    var start=window.pageYOffset||window.scrollY||0;
+    var destination=Math.max(0,start+target.getBoundingClientRect().top-sectionOffset());
+    var distance=destination-start;
+    if(Math.abs(distance)<1)return;
+    var started=performance.now();
+    var duration=Math.min(800,Math.max(380,Math.abs(distance)*.35));
+    function frame(now){
+      var progress=Math.min(1,(now-started)/duration);
+      var eased=progress<.5?2*progress*progress:1-Math.pow(-2*progress+2,2)/2;
+      window.scrollTo(0,start+distance*eased);
+      if(progress<1)scrollAnimation=requestAnimationFrame(frame);else{scrollAnimation=0;syncSection()}
+    }
+    scrollAnimation=requestAnimationFrame(frame);
   }
   links.forEach(function(link){
     link.addEventListener('click',function(event){
@@ -73,7 +90,7 @@
       event.preventDefault();
       setSection(id);
       try{history.pushState(null,'','#'+id)}catch(e){location.hash=id}
-      window.scrollTo({top:Math.max(0,target.offsetTop-sectionOffset()),behavior:'smooth'});
+      scrollToSection(target);
     });
   });
   window.addEventListener('scroll',function(){
